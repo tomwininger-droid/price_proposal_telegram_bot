@@ -3,7 +3,10 @@
 כלי ליצירת הצעות מחיר, רץ מקומית בדפדפן בלבד (ללא שרת, ללא עלות).
 
 > **רוצים בוט טלגרם שמייצר הצעות מהקלטה קולית, עם מיתוג משלכם, בלי שרת/SSH?**
-> ראו [SETUP_GUIDE.md](SETUP_GUIDE.md) — דיפלוי בכמה דקות ב-Render.
+>
+> [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tomwininger-droid/price_proposal_telegram_bot)
+>
+> ראו [SETUP_GUIDE.md](SETUP_GUIDE.md) למדריך מלא — דיפלוי בכמה דקות ב-Render.
 > למשתמש המתקדם/הטכני בלבד: [bot/README.md](bot/README.md) מתאר גם פריסה עצמאית על VPS.
 
 ## איך פותחים
