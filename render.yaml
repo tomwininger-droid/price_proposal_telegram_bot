@@ -1,0 +1,69 @@
+services:
+  - type: web
+    name: quote-bot
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    disk:
+      name: quote-bot-data
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      # ===== חובה =====
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ALLOWED_USER_IDS
+        sync: false
+
+      # ===== בסיס =====
+      - key: PORT
+        value: 8080
+      - key: CLAUDE_MODEL
+        value: claude-sonnet-4-6
+      - key: PUPPETEER_EXECUTABLE_PATH
+        value: /usr/bin/chromium
+      # PUBLIC_BASE_URL is intentionally NOT set here — Render auto-injects
+      # RENDER_EXTERNAL_URL to every web service, and bot/index.js falls back to
+      # it automatically when PUBLIC_BASE_URL is blank. No action needed.
+      # Both quotes/ and conversations.json live under the one mounted disk above,
+      # so they survive restarts and redeploys.
+      - key: DATA_DIR
+        value: /app/data
+
+      # ===== מיתוג =====
+      - key: BUSINESS_NAME
+        sync: false
+      - key: BUSINESS_SLOGAN
+        sync: false
+      - key: SENDER_NAME
+        sync: false
+      - key: PRIMARY_COLOR
+        sync: false
+      - key: BG_COLOR
+        sync: false
+
+      # ===== אופציונלי: שליחת מייל (השאר ריק אם לא רוצים את הפיצ'ר) =====
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 465
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: FROM_EMAIL
+        sync: false
+
+      # ===== אופציונלי: העלאה ל-Drive (השאר ריק אם לא רוצים את הפיצ'ר) =====
+      - key: DRIVE_FOLDER_ID
+        sync: false
+      - key: GOOGLE_SERVICE_ACCOUNT_KEY_B64
+        sync: false
+
+      # ===== אופציונלי =====
+      - key: SETUP_STATUS_TOKEN
+        sync: false

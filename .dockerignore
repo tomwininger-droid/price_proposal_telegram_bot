@@ -1,0 +1,9 @@
+node_modules
+bot/node_modules
+bot/.env
+bot/drive-service-account.json
+bot/conversations.json
+quotes
+.git
+.claude
+*.md

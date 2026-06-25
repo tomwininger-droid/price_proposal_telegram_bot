@@ -1,0 +1,482 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --indigo:#3B2BCB;
+  --indigo-dark:#241a8f;
+  --lavender:#F4F3FA;
+  --text:#1f1b3d;
+  --muted:#6b6688;
+  --border:#d9d6ec;
+}
+
+*{box-sizing:border-box;}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:#e9e9ee;
+  font-family:'Rubik',-apple-system,'Segoe UI',Arial,sans-serif;
+  color:var(--text);
+}
+
+body{ direction:rtl; }
+
+/* ===== Toolbar ===== */
+.toolbar{
+  position:sticky;
+  top:0;
+  z-index:100;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  padding:10px 16px;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  box-shadow:0 2px 6px rgba(0,0,0,0.06);
+}
+
+.toolbar button{
+  font-family:inherit;
+  font-size:13px;
+  font-weight:600;
+  color:var(--indigo);
+  background:var(--lavender);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px 14px;
+  cursor:pointer;
+  transition:background .15s,transform .05s;
+  white-space:nowrap;
+}
+.toolbar button:hover{ background:#e7e4f8; }
+.toolbar button:active{ transform:scale(0.97); }
+.toolbar button.primary{
+  background:var(--indigo);
+  color:#fff;
+  border-color:var(--indigo);
+}
+.toolbar button.primary:hover{ background:var(--indigo-dark); }
+.toolbar .spacer{ flex:1; }
+.toolbar input[type="number"]{
+  width:60px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:6px 8px;
+  font-family:inherit;
+}
+.toolbar label{ font-size:13px; color:var(--muted); display:flex; align-items:center; gap:6px;}
+
+/* ===== Page / Document ===== */
+.page-wrap{
+  padding:30px 16px 80px;
+  display:flex;
+  justify-content:center;
+}
+
+.page{
+  width:100%;
+  max-width:850px;
+  background:#fff;
+  box-shadow:0 4px 24px rgba(0,0,0,0.12);
+  border-radius:4px;
+  padding:60px 64px 70px;
+  min-height:1100px;
+}
+
+/* Plain wrapper table — its only job is to let <thead> repeat on every
+   printed page natively. No visual styling of its own. */
+.print-page-table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+.print-page-table > thead > tr > td,
+.print-page-table > tbody > tr > td{
+  padding:0;
+  border:none;
+}
+
+/* ===== Header ===== */
+.doc-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:24px;
+  margin-bottom:18px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.brand-logo{
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  background:var(--indigo);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-weight:800;
+  font-size:9px;
+  line-height:1.1;
+  flex-shrink:0;
+  letter-spacing:0.5px;
+}
+
+.brand-text{ text-align:right; }
+.brand-name{
+  font-weight:800;
+  font-size:18px;
+  color:var(--indigo);
+  line-height:1.2;
+}
+.brand-slogan{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+.doc-title{
+  font-weight:800;
+  font-size:56px;
+  color:var(--indigo);
+  text-align:left;
+  line-height:1;
+  letter-spacing:-1px;
+}
+
+.hr-divider{
+  border:none;
+  border-top:2px solid var(--indigo);
+  opacity:0.35;
+  margin:0 0 40px;
+}
+
+/* ===== Meta fields ===== */
+.meta-row{
+  display:flex;
+  gap:28px;
+  justify-content:flex-end;
+  margin-bottom:34px;
+  font-size:13px;
+  color:var(--muted);
+  flex-wrap:wrap;
+}
+.meta-row .meta-item{ display:flex; gap:6px; align-items:center; }
+.meta-row .meta-item .meta-label{ font-weight:600; color:var(--text); }
+
+/* ===== Quote intro block ===== */
+.quote-subtitle{
+  text-align:center;
+  font-size:22px;
+  font-weight:500;
+  color:var(--text);
+  margin-bottom:6px;
+}
+.quote-heading{
+  text-align:center;
+  font-size:28px;
+  font-weight:800;
+  color:var(--indigo);
+  margin-bottom:22px;
+}
+.quote-intro{
+  text-align:center;
+  font-size:15px;
+  color:var(--text);
+  line-height:1.7;
+  max-width:640px;
+  margin:0 auto 40px;
+}
+
+/* ===== Sections ===== */
+.section{
+  margin-bottom:30px;
+  position:relative;
+}
+.section-heading{
+  font-size:19px;
+  font-weight:800;
+  color:var(--indigo-dark);
+  margin-bottom:10px;
+}
+.section-heading .section-num{
+  color:var(--indigo);
+}
+.section-paragraph{
+  font-size:14.5px;
+  line-height:1.85;
+  color:var(--text);
+  margin:0 0 10px;
+}
+.section-paragraph .paragraph-lead{
+  font-weight:700;
+  color:var(--indigo-dark);
+}
+.section-paragraph .paragraph-body{
+  color:var(--text);
+}
+
+.section-controls,
+.row-controls,
+.table-controls{
+  display:flex;
+  gap:6px;
+  margin-top:6px;
+}
+
+.mini-btn{
+  font-family:inherit;
+  font-size:11px;
+  font-weight:600;
+  color:var(--indigo);
+  background:var(--lavender);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:3px 9px;
+  cursor:pointer;
+}
+.mini-btn:hover{ background:#e7e4f8; }
+.mini-btn.danger{ color:#b3261e; }
+
+/* ===== Editable affordance ===== */
+[contenteditable="true"]{
+  outline:none;
+  border-radius:4px;
+  transition:background .12s;
+  cursor:text;
+}
+[contenteditable="true"]:hover{
+  background:rgba(59,43,203,0.06);
+  box-shadow:0 0 0 2px rgba(59,43,203,0.12);
+}
+[contenteditable="true"]:focus{
+  background:rgba(59,43,203,0.08);
+  box-shadow:0 0 0 2px rgba(59,43,203,0.35);
+}
+
+/* ===== Price table ===== */
+.price-table-wrap{ margin:36px 0 18px; }
+.price-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+.price-table th{
+  background:var(--indigo);
+  color:#fff;
+  font-weight:700;
+  padding:10px 12px;
+  text-align:right;
+}
+.price-table th:last-child,
+.price-table td:last-child{ text-align:left; }
+.price-table td{
+  padding:9px 12px;
+  border-bottom:1px solid var(--border);
+}
+.price-table tbody tr:nth-child(even){ background:var(--lavender); }
+.price-table input.cell-input{
+  width:100%;
+  border:none;
+  background:transparent;
+  font-family:inherit;
+  font-size:14px;
+  color:var(--text);
+  text-align:inherit;
+}
+.price-table input.cell-input:focus{
+  outline:none;
+  background:rgba(59,43,203,0.08);
+  border-radius:4px;
+}
+.price-table .qty-col, .price-table .price-col, .price-table .total-col{ width:110px; }
+.price-table .row-del{ width:36px; text-align:center; }
+
+.totals{
+  margin-top:14px;
+  margin-left:auto;
+  width:280px;
+  font-size:14px;
+}
+.totals-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:6px 4px;
+  white-space:nowrap;
+}
+.totals-row .vat-label{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.totals-row.grand{
+  font-weight:800;
+  color:var(--indigo);
+  font-size:17px;
+  border-top:2px solid var(--indigo);
+  margin-top:4px;
+  padding-top:10px;
+}
+.totals-row .vat-edit{
+  width:38px;
+  border:1px solid var(--border);
+  border-radius:4px;
+  text-align:center;
+  font-family:inherit;
+  font-size:13px;
+  -moz-appearance:textfield;
+}
+.totals-row .vat-edit::-webkit-outer-spin-button,
+.totals-row .vat-edit::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+
+/* ===== Footer note ===== */
+.doc-footer{
+  margin-top:50px;
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* ===== Saved list panel ===== */
+.panel-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(20,16,50,0.45);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+.panel-overlay.hidden{ display:none; }
+.panel{
+  background:#fff;
+  border-radius:12px;
+  width:min(520px,90vw);
+  max-height:80vh;
+  overflow:auto;
+  padding:24px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.25);
+}
+.panel h3{
+  margin:0 0 14px;
+  color:var(--indigo);
+  font-size:18px;
+}
+.panel-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 8px;
+  border-bottom:1px solid var(--border);
+  gap:10px;
+}
+.panel-item .panel-item-info{ flex:1; }
+.panel-item .panel-item-title{ font-weight:600; }
+.panel-item .panel-item-date{ font-size:12px; color:var(--muted); }
+.panel-item-actions{ display:flex; gap:6px; }
+.panel-empty{ color:var(--muted); font-size:13px; padding:10px 0; }
+.panel-close{
+  display:block;
+  margin-top:16px;
+  margin-right:auto;
+}
+
+/* ===== Mobile ===== */
+@media (max-width: 600px){
+  .toolbar{ padding:8px 10px; gap:6px; }
+  .toolbar button{ font-size:12px; padding:7px 10px; }
+
+  .page-wrap{ padding:14px 8px 50px; }
+  .page{ padding:28px 18px 36px; min-height:auto; border-radius:0; }
+
+  .doc-header{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:14px;
+  }
+  .brand{ flex-direction:column; gap:8px; }
+  .brand-text{ text-align:center; }
+  .brand-logo{ width:50px; height:50px; font-size:7.5px; }
+  .doc-title{ font-size:34px; text-align:center; }
+  .hr-divider{ margin-bottom:24px; }
+
+  .meta-row{
+    flex-direction:column;
+    align-items:flex-end;
+    gap:8px;
+    margin-bottom:24px;
+  }
+
+  .quote-subtitle{ font-size:18px; }
+  .quote-heading{ font-size:21px; margin-bottom:16px; }
+  .quote-intro{ font-size:13.5px; max-width:100%; margin-bottom:28px; }
+
+  .section{ margin-bottom:22px; }
+  .section-heading{ font-size:16px; }
+  .section-paragraph{ font-size:13.5px; }
+
+  /* The price table can't reflow into a single column without losing meaning,
+     so let it scroll horizontally instead of squeezing/overlapping columns. */
+  .price-table-wrap{ margin:24px 0 14px; }
+  .price-table-scroll{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .price-table{ font-size:12.5px; min-width:480px; }
+  .price-table th, .price-table td{ padding:7px 8px; }
+  .price-table .qty-col, .price-table .price-col, .price-table .total-col{ width:84px; }
+
+  .totals{ width:100%; max-width:280px; font-size:13px; }
+
+  .doc-footer{ margin-top:34px; font-size:11px; }
+
+  .panel{ width:94vw; padding:18px; }
+}
+
+/* ===== Print ===== */
+@media print{
+  html, body{ background:#fff; }
+  .toolbar, .panel-overlay, .section-controls, .row-controls, .table-controls, .row-del, .no-print{
+    display:none !important;
+  }
+  .page-wrap{ padding:0; }
+  .page{
+    box-shadow:none;
+    border-radius:0;
+    max-width:100%;
+    width:100%;
+    padding:0 16mm;
+    min-height:0;
+  }
+  [contenteditable="true"]:hover,
+  [contenteditable="true"]:focus{
+    background:none;
+    box-shadow:none;
+  }
+
+  /* .print-page-table's <thead> repeats natively on every printed page —
+     no position:fixed hacks, so there's no risk of it overlapping content. */
+  .print-page-table{ display:table; }
+  .print-page-table > thead{ display:table-header-group; }
+  .print-page-table > tbody{ display:table-row-group; }
+
+  /* Avoid splitting a heading away from its text, or a paragraph/row mid-way. */
+  .section-heading{ break-after:avoid; page-break-after:avoid; }
+  .section-paragraph, .section{ break-inside:avoid; page-break-inside:avoid; }
+  .price-table tr{ break-inside:avoid; page-break-inside:avoid; }
+  .totals{ break-inside:avoid; page-break-inside:avoid; }
+
+  @page{ size:A4; margin:16mm; }
+}

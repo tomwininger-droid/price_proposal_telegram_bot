@@ -1,0 +1,13 @@
+.DS_Store
+.claude/
+
+# Bot secrets and runtime data (also covered by bot/.gitignore, kept here too
+# since this is the repo root and the source of truth for what gets pushed)
+bot/node_modules/
+bot/.env
+bot/drive-service-account.json
+bot/conversations.json
+node_modules/
+
+# Generated quote PDFs/JSON — runtime data, may contain client PII
+quotes/*.json

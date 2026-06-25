@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הצעת מחיר — Brands Or Not</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="toolbar">
+  <button id="btn-new">📄 חדש</button>
+  <button id="btn-save" class="primary">💾 שמור הצעה</button>
+  <button id="btn-load">📂 טען הצעה</button>
+  <button id="btn-save-template">⭐ שמור כתבנית</button>
+  <span class="spacer"></span>
+  <button id="btn-export">⬇️ ייצוא גיבוי</button>
+  <button id="btn-import">⬆️ ייבוא גיבוי</button>
+  <input type="file" id="import-file-input" accept="application/json" style="display:none">
+  <button id="btn-pdf" class="primary">🖨️ הורד PDF</button>
+</div>
+
+<div class="page-wrap">
+  <div class="page" id="quote-page">
+    <!-- A real <table>/<thead> is used so the browser's print engine repeats
+         the header on every printed page natively — far more reliable than
+         a position:fixed header, which Chrome can overlap with content. -->
+    <table class="print-page-table">
+      <thead>
+        <tr><td>
+          <div class="doc-header">
+            <div class="brand">
+              <div class="brand-logo">BRANDS<br>OR<br>NOT</div>
+              <div class="brand-text">
+                <div class="brand-name">Brands Or Not</div>
+                <div class="brand-slogan">עיצוב. חוויית משתמש. דיגיטל</div>
+              </div>
+            </div>
+            <div class="doc-title" id="field-title" contenteditable="true">הצעת מחיר</div>
+          </div>
+          <hr class="hr-divider">
+        </td></tr>
+      </thead>
+      <tbody>
+        <tr><td>
+
+          <div class="meta-row">
+            <div class="meta-item"><span class="meta-label">מס׳ הצעה:</span><span id="field-quotenum" contenteditable="true"></span></div>
+            <div class="meta-item"><span class="meta-label">תאריך:</span><span id="field-date" contenteditable="true"></span></div>
+            <div class="meta-item"><span class="meta-label">לכבוד:</span><span id="field-client" contenteditable="true"></span></div>
+          </div>
+
+          <div class="quote-subtitle" id="field-subtitle" contenteditable="true">תוכנית עבודה והצעת מחיר:</div>
+          <div class="quote-heading" id="field-heading" contenteditable="true">אסטרטגיה, דיוק מסרים והקמת משפך שיווקי</div>
+          <div class="quote-intro" id="field-intro" contenteditable="true"></div>
+
+          <div id="sections-container"></div>
+
+          <div class="price-table-wrap">
+            <div class="price-table-scroll">
+              <table class="price-table">
+                <thead>
+                  <tr>
+                    <th>תיאור</th>
+                    <th class="qty-col">כמות</th>
+                    <th class="price-col">מחיר יחידה</th>
+                    <th class="total-col">סה״כ</th>
+                    <th class="row-del"></th>
+                  </tr>
+                </thead>
+                <tbody id="price-table-body"></tbody>
+              </table>
+            </div>
+            <div class="table-controls">
+              <button class="mini-btn" id="btn-add-row">➕ הוסף שורה</button>
+            </div>
+
+            <div class="totals">
+              <div class="totals-row"><span>סכום ביניים</span><span id="subtotal-val">₪0</span></div>
+              <div class="totals-row">
+                <span class="vat-label">מע״מ (<input type="number" id="vat-rate-input" class="vat-edit" min="0" max="100">%)</span>
+                <span id="vat-val">₪0</span>
+              </div>
+              <div class="totals-row grand"><span>סה״כ לתשלום</span><span id="grand-val">₪0</span></div>
+            </div>
+          </div>
+
+          <div class="doc-footer">הצעה זו תקפה ל-14 יום ממועד הוצאתה · Brands Or Not</div>
+
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel-overlay hidden" id="load-panel">
+  <div class="panel">
+    <h3>הצעות שמורות</h3>
+    <div id="load-panel-body"></div>
+    <button class="mini-btn panel-close" id="load-panel-close">סגור</button>
+  </div>
+</div>
+
+<script src="templates.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
