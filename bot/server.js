@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const express = require('express');
 const { getBranding } = require('./branding');
 const { getSetupStatus } = require('./setup-status');
-const { QUOTES_DIR, getMonthlyUsage, currentMonth } = require('./store');
+const { QUOTES_DIR, getMonthlyUsage, currentMonth, getAllCredits } = require('./store');
 
 const TOOL_DIR = path.join(__dirname, '..');
 const INDEX_PATH = path.join(TOOL_DIR, 'index.html');
@@ -46,17 +46,25 @@ function renderUsagePage(){
   const rows = entries.length
     ? entries.map(([chat, n]) => `<tr><td>${chat}</td><td>${n}${limit ? ' / ' + limit : ''}</td></tr>`).join('')
     : '<tr><td colspan="2">אין שימוש החודש עדיין.</td></tr>';
+  const credits = getAllCredits();
+  const creditEntries = Object.entries(credits);
+  const creditRows = creditEntries.length
+    ? creditEntries.map(([chat, c]) => `<tr><td>${chat}</td><td>${c.balance}</td></tr>`).join('')
+    : '<tr><td colspan="2">אין לקוחות במודל קרדיטים.</td></tr>';
   return `<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8">
 <title>שימוש חודשי</title>
 <style>
 body{ font-family:-apple-system,'Segoe UI',Arial,sans-serif; padding:24px; background:#f4f3fa; }
-table{ border-collapse:collapse; background:#fff; width:100%; max-width:520px; }
+table{ border-collapse:collapse; background:#fff; width:100%; max-width:520px; margin-bottom:28px; }
 th,td{ padding:10px 14px; border-bottom:1px solid #ddd; text-align:right; }
 th{ background:#eceaf8; }
 h1{ font-size:18px; }
+h2{ font-size:15px; }
 </style></head><body>
 <h1>שימוש חודשי — ${currentMonth()} (סה״כ ${total} הצעות${limit ? `, מכסה ${limit} לכל משתמש` : ''})</h1>
 <table><tr><th>מזהה צ׳אט</th><th>הצעות החודש</th></tr>${rows}</table>
+<h2>יתרת קרדיטים (מודל חד-פעמי)</h2>
+<table><tr><th>מזהה צ׳אט</th><th>יתרה</th></tr>${creditRows}</table>
 </body></html>`;
 }
 

@@ -8,6 +8,7 @@ bot/.env
 bot/drive-service-account.json
 bot/conversations.json
 bot/usage.json
+bot/credits.json
 node_modules/
 
 # Generated quote PDFs/JSON — runtime data, may contain client PII
