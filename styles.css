@@ -211,9 +211,9 @@ body{ direction:rtl; }
 }
 .section-paragraph{
   font-size:14.5px;
-  line-height:1.85;
+  line-height:1.5;
   color:var(--text);
-  margin:0 0 10px;
+  margin:0 0 6px;
 }
 .section-paragraph .paragraph-lead{
   font-weight:700;
