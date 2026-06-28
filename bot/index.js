@@ -8,7 +8,7 @@ const { Telegraf, Markup } = require('telegraf');
 const { transcribe } = require('./transcribe');
 const { replyVoiceAndText } = require('./speak');
 const { generateQuote, draftClientEmail } = require('./generate');
-const { saveQuote, getConversation, setConversation, clearConversation } = require('./store');
+const { saveQuote, getConversation, setConversation, clearConversation, getUsage, incrementUsage } = require('./store');
 const { startServer } = require('./server');
 const { renderQuotePdf } = require('./pdf');
 const { sendQuoteEmail, emailConfigured } = require('./email');
@@ -20,6 +20,10 @@ const {
   PORT = '8080',
   ALLOWED_USER_IDS = ''
 } = process.env;
+
+// Monthly quota of finished quotes per chat (tier enforcement + AI-cost protection,
+// since Tom funds the AI). 0 or unset = unlimited (the original behavior).
+const MONTHLY_QUOTE_LIMIT = Number(process.env.MONTHLY_QUOTE_LIMIT || 0);
 
 // On Render, RENDER_EXTERNAL_URL is auto-injected with this service's own https
 // URL — no need to know it before first deploy. Falls back to localhost for local dev.
@@ -85,8 +89,22 @@ async function handleUserText(ctx, transcript){
     return;
   }
 
-  await ctx.sendChatAction('typing');
   const convo = getConversation(ctx.chat.id);
+
+  // Quota: block only when STARTING a brand-new quote (no active conversation).
+  // In-progress collecting turns and refinements of an already-counted quote
+  // keep working — you can finish/refine what you started, just not begin the
+  // (N+1)th quote this month. MONTHLY_QUOTE_LIMIT=0 disables the cap entirely.
+  if (MONTHLY_QUOTE_LIMIT > 0 && !convo && getUsage(ctx.chat.id) >= MONTHLY_QUOTE_LIMIT) {
+    await replyVoiceAndText(
+      ctx,
+      `הגעת למכסת ההצעות החודשית (${MONTHLY_QUOTE_LIMIT}). המכסה מתאפסת בתחילת החודש הבא. ` +
+      'לשדרוג חבילה — דבר עם מי שהקים לך את הבוט.'
+    );
+    return;
+  }
+
+  await ctx.sendChatAction('typing');
   const priorDraft = convo ? convo.draft : null;
 
   let result;
@@ -110,7 +128,12 @@ async function handleUserText(ctx, transcript){
 
   // Complete — persist, keep the draft around (so "תיקון" can keep refining it), send the link.
   const id = saveQuote(quote);
-  setConversation(ctx.chat.id, { stage: 'done', draft: quote, id });
+  // Count one quota unit per distinct quote, not per refinement: only the first
+  // time this conversation reaches 'done'. The `counted` flag rides along so
+  // later "תיקון" passes (which re-enter handleUserText) don't double-count.
+  const alreadyCounted = convo && convo.counted;
+  if (!alreadyCounted) incrementUsage(ctx.chat.id);
+  setConversation(ctx.chat.id, { stage: 'done', draft: quote, id, counted: true });
   const url = `${PUBLIC_BASE_URL.replace(/\/$/, '')}/quote-tool/?id=${id}`;
   await replyVoiceAndText(ctx, assistantMessage);
   await ctx.reply(

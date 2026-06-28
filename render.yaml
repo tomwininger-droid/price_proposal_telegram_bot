@@ -24,6 +24,9 @@ services:
         value: 8080
       - key: CLAUDE_MODEL
         value: claude-sonnet-4-6
+      # מכסת הצעות חודשית לפי חבילה (רגיל=15, פלוס=50, סופר=150, 0=ללא הגבלה).
+      - key: MONTHLY_QUOTE_LIMIT
+        sync: false
       - key: PUPPETEER_EXECUTABLE_PATH
         value: /usr/bin/chromium
       # PUBLIC_BASE_URL is intentionally NOT set here — Render auto-injects

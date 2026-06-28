@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const express = require('express');
 const { getBranding } = require('./branding');
 const { getSetupStatus } = require('./setup-status');
-const { QUOTES_DIR } = require('./store');
+const { QUOTES_DIR, getMonthlyUsage, currentMonth } = require('./store');
 
 const TOOL_DIR = path.join(__dirname, '..');
 const INDEX_PATH = path.join(TOOL_DIR, 'index.html');
@@ -35,6 +35,28 @@ h1{ font-size:18px; }
 </style></head><body>
 <h1>בדיקת תקינות החיבורים</h1>
 <table>${rows}</table>
+</body></html>`;
+}
+
+function renderUsagePage(){
+  const usage = getMonthlyUsage();
+  const limit = Number(process.env.MONTHLY_QUOTE_LIMIT || 0);
+  const entries = Object.entries(usage).sort((a, b) => b[1] - a[1]);
+  const total = entries.reduce((sum, [, n]) => sum + n, 0);
+  const rows = entries.length
+    ? entries.map(([chat, n]) => `<tr><td>${chat}</td><td>${n}${limit ? ' / ' + limit : ''}</td></tr>`).join('')
+    : '<tr><td colspan="2">אין שימוש החודש עדיין.</td></tr>';
+  return `<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8">
+<title>שימוש חודשי</title>
+<style>
+body{ font-family:-apple-system,'Segoe UI',Arial,sans-serif; padding:24px; background:#f4f3fa; }
+table{ border-collapse:collapse; background:#fff; width:100%; max-width:520px; }
+th,td{ padding:10px 14px; border-bottom:1px solid #ddd; text-align:right; }
+th{ background:#eceaf8; }
+h1{ font-size:18px; }
+</style></head><body>
+<h1>שימוש חודשי — ${currentMonth()} (סה״כ ${total} הצעות${limit ? `, מכסה ${limit} לכל משתמש` : ''})</h1>
+<table><tr><th>מזהה צ׳אט</th><th>הצעות החודש</th></tr>${rows}</table>
 </body></html>`;
 }
 
@@ -90,6 +112,15 @@ function startServer(port){
     }
     const results = await getSetupStatus();
     res.set('Content-Type', 'text/html; charset=utf-8').send(renderSetupStatusPage(results));
+  });
+
+  // Per-bot monthly usage, for Tom's billing/quota tracking. Same token guard.
+  app.get('/quote-tool/usage', (req, res) => {
+    if (req.query.token !== getSetupStatusToken()) {
+      res.status(404).send('Not found');
+      return;
+    }
+    res.set('Content-Type', 'text/html; charset=utf-8').send(renderUsagePage());
   });
 
   app.get('/', (req, res) => res.redirect('/quote-tool/'));
