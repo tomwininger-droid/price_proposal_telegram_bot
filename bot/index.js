@@ -66,29 +66,16 @@ async function downloadVoice(ctx){
   return tmp;
 }
 
-/**
- * Render the quote to PDF and upload it to the shared "all quotes" Drive folder.
- * Silently does nothing if Drive isn't configured yet; logs (but doesn't throw on) failures
- * so a Drive hiccup never blocks the bot from handing back the quote link.
- */
-async function uploadToDriveIfConfigured(quote, id){
-  if (!driveConfigured()) return null;
-  try {
-    const pdfBuffer = await renderQuotePdf({ port: Number(PORT), id });
-    const filename = `הצעת מחיר - ${quote.clientName || 'לקוח'} - ${quote.date || ''}.pdf`;
-    return await uploadQuotePdf({ pdfBuffer, filename });
-  } catch (err) {
-    console.error('Drive upload failed:', err);
-    return null;
-  }
-}
-
 function quoteReadyKeyboard(id){
   const row = [Markup.button.callback('✏️ תיקון', `fix:${id}`)];
   if (emailConfigured()) {
     row.push(Markup.button.callback('📧 שלח ללקוח במייל', `email:${id}`));
   }
-  return Markup.inlineKeyboard([row]);
+  const rows = [row];
+  if (driveConfigured()) {
+    rows.push([Markup.button.callback('☁️ העלה לדרייב', `drive:${id}`)]);
+  }
+  return Markup.inlineKeyboard(rows);
 }
 
 /* ===== Core quote generation (text/voice → draft or finished quote) ===== */
@@ -130,11 +117,6 @@ async function handleUserText(ctx, transcript){
     `📄 ההצעה מוכנה:\n${url}\n\nפתח, ערוך אם צריך, ולחץ "הורד PDF".`,
     quoteReadyKeyboard(id)
   );
-
-  const driveFile = await uploadToDriveIfConfigured(quote, id);
-  if (driveFile && driveFile.webViewLink) {
-    await ctx.reply(`☁️ ההצעה הועלתה גם לדרייב המשותף:\n${driveFile.webViewLink}`);
-  }
 }
 
 /* ===== Email collection + send flow ===== */
@@ -223,6 +205,31 @@ bot.on('text', ctx => routeIncoming(ctx, ctx.message.text.trim()));
 bot.action(/^fix:(.+)$/, async ctx => {
   await ctx.answerCbQuery();
   await replyVoiceAndText(ctx, 'מה תרצה לשנות בהצעה? אפשר להקליט או לכתוב.');
+});
+
+bot.action(/^drive:(.+)$/, async ctx => {
+  const id = ctx.match[1];
+  await ctx.answerCbQuery();
+  if (!driveConfigured()) {
+    await ctx.reply('העלאה לדרייב לא הוגדרה לבוט הזה.');
+    return;
+  }
+  const convo = getConversation(ctx.chat.id);
+  if (!convo || convo.id !== id) {
+    await ctx.reply('לא מצאתי את ההצעה הזו. שלח /new כדי להתחיל הצעה חדשה.');
+    return;
+  }
+  await ctx.sendChatAction('upload_document');
+  try {
+    const pdfBuffer = await renderQuotePdf({ port: Number(PORT), id });
+    const quote = convo.draft;
+    const filename = `הצעת מחיר - ${quote.clientName || 'לקוח'} - ${quote.date || ''}.pdf`;
+    const file = await uploadQuotePdf({ pdfBuffer, filename });
+    await ctx.reply(`☁️ ההצעה הועלתה לדרייב:\n${file.webViewLink}`);
+  } catch (err) {
+    console.error('Drive upload failed:', err);
+    await ctx.reply('ההעלאה לדרייב נכשלה. בדוק את הגדרות ה-Service Account ונסה שוב.');
+  }
 });
 
 bot.action(/^email:(.+)$/, async ctx => {
